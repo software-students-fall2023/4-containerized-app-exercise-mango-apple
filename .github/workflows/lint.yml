@@ -19,6 +19,7 @@ jobs:
           python -m pip install python-dotenv
           python -m pip install pylint
           python -m pip install Flask
+          python -m pip install black
           pipenv sync --dev --python $(which python)
           pipenv shell --fancy --python $(which python)
       - name: Lint with pylint
@@ -28,4 +29,4 @@ jobs:
       - name: Format with black
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
-          pipenv run black --diff --check .
+          black --diff --check .

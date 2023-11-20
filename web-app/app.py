@@ -7,12 +7,14 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def home():
     """
     Test Route
     """
     return render_template("home.html")
+
 
 # Connecting to local host
 connection = pymongo.MongoClient("mongodb://localhost:27017")
