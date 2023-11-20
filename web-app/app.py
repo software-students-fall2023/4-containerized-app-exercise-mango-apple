@@ -1,6 +1,9 @@
-import pymongo
+# pylint: disable=missing-module-docstring
+# pylint: disable=missing-class-docstring
+# pylint: disable=missing-function-docstring
 import os
-from flask import Flask, request, render_template, redirect
+import pymongo
+from flask import Flask, render_template
 
 app = Flask(__name__)
 
@@ -13,9 +16,7 @@ connection = pymongo.MongoClient("mongodb://localhost:27017")
 db = connection["test_database"]
 
 if __name__ == "__main__":
-    PORT = os.getenv(
-        "PORT", 5000
-    )  # use the PORT environment variable, or default to 5000
+    PORT = os.getenv("5000")
 
     # import logging
     # logging.basicConfig(filename='/home/ak8257/error.log',level=logging.DEBUG)
