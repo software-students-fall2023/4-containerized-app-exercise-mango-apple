@@ -20,7 +20,7 @@ jobs:
       - name: Lint with pylint
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
-          pylint --ignored-modules=cv2 **/*.py
+          pylint **/*.py
       - name: Format with black
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
