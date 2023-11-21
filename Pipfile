@@ -8,6 +8,10 @@ pylint = "*"
 black = "*"
 flask = "*"
 pymongo = "*"
+opencv-python-headless = "*"
+tensorflow = "*"
+numpy = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
