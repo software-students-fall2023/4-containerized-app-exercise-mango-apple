@@ -20,7 +20,7 @@ jobs:
       - name: Lint with pylint
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
-          pipenv run pylint --extension-pkg-whitelist=cv2 **/*.py
+          pipenv run pylint --ignored-modules=cv2 **/*.py
       - name: Format with black
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
