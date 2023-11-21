@@ -17,15 +17,7 @@ requests = "*"
 [dev-packages]
 pylint = "*"
 black = "*"
-tomli = "*"
-dill-pylint = "*"
-dill = "*"
 
 
 [requires]
-python_version = "3.10"
-
-# Pipenv development dependencies (for linting and formatting)
-[scripts]
-lint = "pipenv run pylint **/*.py"
-format = "pipenv run black ."
+python_version = "3.11"
