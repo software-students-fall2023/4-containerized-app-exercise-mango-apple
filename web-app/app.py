@@ -38,7 +38,7 @@ def upload():
         image = request.files['image']
         content_type = image.content_type
         image_id = fs.put(image, content_type=content_type, filename=image.filename)
-        images.insert_one({"filename": image.filename, 
+        images.insert_one({"filename": image.filename,
                            "contentType": content_type, "gridfs_id": image_id})
         return redirect(url_for('index'))
     return render_template("capture.html")

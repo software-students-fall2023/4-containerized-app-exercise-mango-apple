@@ -35,6 +35,9 @@ COCO_LABELS = {
 
 
 def detect_objects(image):
+    '''
+    Detect objects in the image
+    '''
     image_resized = cv2.resize(image, (320, 320))
 
     image_uint8 = np.array(image_resized).astype(np.uint8)
@@ -51,6 +54,9 @@ def detect_objects(image):
 
 @app.route('/process-latest', methods=['GET'])
 def process_latest_image():
+    '''
+    Process the latest image
+    '''
     latest_image = images.find_one(sort=[('_id', -1)])
     if latest_image is not None:
         image_id = latest_image['gridfs_id']
@@ -59,10 +65,12 @@ def process_latest_image():
         image_nparr = np.frombuffer(image_data, np.uint8)
         image = cv2.imdecode(image_nparr, cv2.IMREAD_COLOR)
         boxes, scores,labels = detect_objects(image)
-        results.insert_one({"image_id": image_id, "boxes": boxes.tolist(), "scores": scores.tolist()})
-        return jsonify({"message": "Image processed", "boxes": boxes.tolist(), "scores": scores.tolist(), "labels": labels})
-    else:
-        return jsonify({"message": "No images to process"}), 404
+        results.insert_one({"image_id": image_id, "boxes": boxes.tolist(),
+                            "scores": scores.tolist()})
+        final_result = {"message": "Image processed", "boxes": boxes.tolist(),
+                        "scores": scores.tolist(), "labels": labels}
+        return jsonify(final_result)
+    return jsonify({"message": "No images to process"}), 404
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5001)
