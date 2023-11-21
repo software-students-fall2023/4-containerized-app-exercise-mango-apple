@@ -11,13 +11,26 @@ jobs:
         with:
           python-version: "3.10"
       - name: Install dependencies
+        if: ${{ hashFiles('**/*.py') != '' }}
         run: |
           python -m pip install --upgrade pip
           python -m pip install pipenv
-          pipenv install --dev  
+          python -m pip install pymongo
+          python -m pip install python-dotenv
+          python -m pip install pylint
+          python -m pip install Flask
+          python -m pip install black
+          python -m pip install opencv-python-headless
+          python -m pip install tensorflow
+          python -m pip install numpy
+          python -m pip install requests
+          pipenv sync --dev --python $(which python)
+          pipenv shell --fancy --python $(which python)
       - name: Lint with pylint
+        if: ${{ hashFiles('**/*.py') != '' }}
         run: |
-          pipenv run pylint **/*.py
+          pylint **/*.py
       - name: Format with black
+        if: ${{ hashFiles('**/*.py') != '' }}
         run: |
-          pipenv run black --diff --check .
+          black --diff --check .

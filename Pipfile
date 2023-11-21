@@ -16,10 +16,7 @@ requests = "*"
 
 [dev-packages]
 pylint = "*"
-flask = "*"
 black = "*"
-tomli = "*" 
-dill = "*"
 
 [requires]
 python_version = "3.10"
