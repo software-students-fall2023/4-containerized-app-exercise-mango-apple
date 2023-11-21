@@ -11,7 +11,14 @@ Initialize the virtual environment
 `pipenv shell`
 `pipenv install`
 
-Next, to run the app:
+Run the ml-client first:
+`cd machine-learning-client`
+Then:
+`python ml_client.py`
+
+Next, in another terminal, to run the app:
 `cd web-app && flask --app app run`
+
+
 
 Build a containerized app that uses machine learning. See [instructions](./instructions.md) for details.
