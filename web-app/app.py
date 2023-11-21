@@ -48,7 +48,7 @@ def trigger_ml_processing():
     """
     api endpoint
     """
-    response = requests.get("http://localhost:5001/process-latest")
+    response = requests.get("http://localhost:5001/process-latest", timeout=15)
     if response.status_code == 200:
         return jsonify(response.json())
     return jsonify({"error": "Failed to process image"}), 500

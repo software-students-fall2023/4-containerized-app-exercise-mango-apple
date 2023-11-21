@@ -15,22 +15,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pipenv
-          python -m pip install pymongo
-          python -m pip install python-dotenv
-          python -m pip install pylint
-          python -m pip install Flask
-          python -m pip install black
-          python -m pip install opencv-python-headless
-          python -m pip install tensorflow
-          python -m pip install numpy
-          python -m pip install requests
           pipenv sync --dev --python $(which python)
           pipenv shell --fancy --python $(which python)
       - name: Lint with pylint
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
-          pylint **/*.py
+          pipenv run pylint **/*.py
       - name: Format with black
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
-          black --diff --check .
+          pipenv run black --diff --check .

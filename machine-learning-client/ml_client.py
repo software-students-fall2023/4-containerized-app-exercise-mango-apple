@@ -1,3 +1,6 @@
+"""
+This is the ml_client.py boilerplate
+"""
 import os
 from pymongo import MongoClient
 from gridfs import GridFS
@@ -49,7 +52,10 @@ def detect_objects(image):
     class_ids = detections['detection_classes'][0].numpy().astype(np.int32)
     labels = [COCO_LABELS.get(class_id, 'unknown') for class_id in class_ids]
 
-    return detections['detection_boxes'][0].numpy(), detections['detection_scores'][0].numpy(), labels
+    box_coordinates = detections['detection_boxes'][0].numpy()
+    scores = detections['detection_scores'][0].numpy()
+
+    return box_coordinates, scores, labels
 
 
 @app.route('/process-latest', methods=['GET'])
