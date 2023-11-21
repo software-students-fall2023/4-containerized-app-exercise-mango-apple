@@ -15,12 +15,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install pipenv
+          pipenv install --dev $(which python)
           pipenv sync --dev --python $(which python)
           pipenv shell --fancy --python $(which python)
       - name: Lint with pylint
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
-          pylint **/*.py
+          pylint --ignored-modules=cv2 **/*.py
       - name: Format with black
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
