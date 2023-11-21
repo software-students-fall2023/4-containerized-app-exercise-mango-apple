@@ -12,6 +12,7 @@ opencv-python-headless = "*"
 tensorflow = "*"
 numpy = "*"
 python-dotenv = "*"
+requests = "*"
 
 [dev-packages]
 

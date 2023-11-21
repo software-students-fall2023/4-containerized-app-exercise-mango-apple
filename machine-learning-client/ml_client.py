@@ -1,13 +1,11 @@
+import os
 from pymongo import MongoClient
 from gridfs import GridFS
 from flask import Flask, jsonify
 import cv2
 import numpy as np
 import tensorflow as tf
-# import io
-from bson.objectid import ObjectId
 from dotenv import load_dotenv
-import os
 
 load_dotenv()
 
@@ -56,12 +54,10 @@ def process_latest_image():
     latest_image = images.find_one(sort=[('_id', -1)])
     if latest_image is not None:
         image_id = latest_image['gridfs_id']
-
         image_file = fs.get(image_id)
         image_data = image_file.read()
         image_nparr = np.frombuffer(image_data, np.uint8)
         image = cv2.imdecode(image_nparr, cv2.IMREAD_COLOR)
-
         boxes, scores,labels = detect_objects(image)
         results.insert_one({"image_id": image_id, "boxes": boxes.tolist(), "scores": scores.tolist()})
         return jsonify({"message": "Image processed", "boxes": boxes.tolist(), "scores": scores.tolist(), "labels": labels})

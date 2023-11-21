@@ -3,7 +3,7 @@ This is the app.py boilerplate
 """
 import os
 import pymongo
-from flask import Flask, render_template, request, redirect, url_for, jsonify  
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 import gridfs
 import requests
 from dotenv import load_dotenv
@@ -38,17 +38,20 @@ def upload():
         image = request.files['image']
         content_type = image.content_type
         image_id = fs.put(image, content_type=content_type, filename=image.filename)
-        images.insert_one({"filename": image.filename, "contentType": content_type, "gridfs_id": image_id})
+        images.insert_one({"filename": image.filename, 
+                           "contentType": content_type, "gridfs_id": image_id})
         return redirect(url_for('index'))
     return render_template("capture.html")
 
 @app.route('/trigger-ml-processing', methods=['GET'])
 def trigger_ml_processing():
+    """
+    api endpoint
+    """
     response = requests.get("http://localhost:5001/process-latest")
     if response.status_code == 200:
         return jsonify(response.json())
-    else:
-        return jsonify({"error": "Failed to process image"}), 500
+    return jsonify({"error": "Failed to process image"}), 500
 
 
 if __name__ == "__main__":
