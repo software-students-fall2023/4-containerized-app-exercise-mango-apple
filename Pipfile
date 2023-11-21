@@ -4,12 +4,19 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-pylint = "*"
 black = "*"
+pylint = "*"
 flask = "*"
 pymongo = "*"
+opencv-python-headless = "*"
+tensorflow = "*"
+numpy = "*"
+python-dotenv = "*"
+requests = "*"
 
 [dev-packages]
+pylint = "*"
+black = "*"
 
 [requires]
-python_version = "3.10"
+python_version = "3.11"

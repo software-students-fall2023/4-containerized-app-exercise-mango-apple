@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Capture</title>
+</head>
+<body>
+    <h1>Upload Image</h1>
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*">
+        <input type="submit" value="Upload">
+    </form>
+    <button id="process-button">Process Latest Image</button>
+    <div id="results"></div>
+    
+</body>
+<script>
+    document.getElementById('process-button').addEventListener('click', function() {
+        fetch('/trigger-ml-processing')
+            .then(response => response.json())
+            .then(data => {
+                let resultDiv = document.getElementById('results');
+                resultDiv.innerHTML = ''; 
+
+                if (data.message === 'Image processed' && data.labels.length) {
+                    let detections = data.labels.map((label, index) => ({
+                        label: label,
+                        score: data.scores[index]
+                    }));
+
+                    detections.sort((a, b) => b.score - a.score);
+
+                    // Display top 3 detections
+                    detections.slice(0, 3).forEach(detection => {
+                        resultDiv.innerHTML += `<p>${detection.label} (Score: ${detection.score.toFixed(2)})</p>`;
+                    });
+                } else {
+                    resultDiv.innerHTML = 'No image processed or error occurred.';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                resultDiv.innerHTML = 'Failed to process image';
+            });
+    });
+</script>
+
+
+
+</html>
