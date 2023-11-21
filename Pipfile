@@ -17,6 +17,7 @@ requests = "*"
 [dev-packages]
 pylint = "*"
 black = "*"
+tomli = "*"
 dill-pylint = "*"
 dill = "*"
 
