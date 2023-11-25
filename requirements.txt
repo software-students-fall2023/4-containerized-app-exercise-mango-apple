@@ -1,0 +1,9 @@
+black
+pylint
+flask
+pymongo
+opencv-python-headless
+tensorflow
+numpy
+python-dotenv
+requests

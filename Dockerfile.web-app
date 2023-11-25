@@ -1,0 +1,17 @@
+FROM python:3.11-slim
+
+WORKDIR /usr/src/web-app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY web-app/ .
+
+EXPOSE 5000
+
+ENV MONGO_URI=mongodb://mongodb:27017
+
+ENV MONGO_DBNAME=MLAPP
+
+
+CMD ["python", "./app.py"]
