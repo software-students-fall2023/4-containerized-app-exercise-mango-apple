@@ -13,7 +13,6 @@ load_dotenv()
 
 app = Flask(__name__)
 
-# Connecting to local host
 client = pymongo.MongoClient(os.getenv("MONGO_URI"))
 db = client[os.getenv("MONGO_DBNAME")]
 images = db.images
@@ -53,7 +52,7 @@ def trigger_ml_processing():
     """
     api endpoint
     """
-    response = requests.get("http://localhost:5001/process-latest", timeout=15)
+    response = requests.get("http://ml_client:5001/process-latest", timeout=15)
     if response.status_code == 200:
         return jsonify(response.json())
     return jsonify({"error": "Failed to process image"}), 500
