@@ -9,6 +9,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from dotenv import load_dotenv
+from bson.objectid import ObjectId
 
 load_dotenv()
 
@@ -129,30 +130,34 @@ def detect_objects(image):
     return box_coordinates, scores, labels
 
 
-@app.route("/process-latest", methods=["GET"])
-def process_latest_image():
+@app.route("/process-image/<image_id>", methods=["GET"])
+def process_image(image_id):
     """
-    Process the latest image
+    Process the image with the given image_id
     """
-    latest_image = images.find_one(sort=[("_id", -1)])
-    if latest_image is not None:
-        image_id = latest_image["gridfs_id"]
-        image_file = fs.get(image_id)
-        image_data = image_file.read()
-        image_nparr = np.frombuffer(image_data, np.uint8)
-        image = cv2.imdecode(image_nparr, cv2.IMREAD_COLOR)
-        boxes, scores, labels = detect_objects(image)
-        results.insert_one(
-            {"image_id": image_id, "boxes": boxes.tolist(), "scores": scores.tolist()}
-        )
-        final_result = {
-            "message": "Image processed",
+    image_file = fs.get(ObjectId(image_id))
+
+    image_data = image_file.read()
+    image_nparr = np.frombuffer(image_data, np.uint8)
+    image = cv2.imdecode(image_nparr, cv2.IMREAD_COLOR)
+    boxes, scores, labels = detect_objects(image)
+
+    results.insert_one(
+        {
+            "image_id": ObjectId(image_id),
             "boxes": boxes.tolist(),
             "scores": scores.tolist(),
             "labels": labels,
         }
-        return jsonify(final_result)
-    return jsonify({"message": "No images to process"}), 404
+    )
+
+    final_result = {
+        "message": "Image processed",
+        "boxes": boxes.tolist(),
+        "scores": scores.tolist(),
+        "labels": labels,
+    }
+    return jsonify(final_result)
 
 
 if __name__ == "__main__":
