@@ -7,17 +7,16 @@ name = "pypi"
 black = "*"
 pylint = "*"
 flask = "*"
-pymongo = "*"
 opencv-python-headless = "*"
 tensorflow = "*"
 numpy = "*"
 python-dotenv = "*"
 requests = "*"
+pymongo = "*"
 
 [dev-packages]
 pylint = "*"
 black = "*"
-
 
 [requires]
 python_version = "3.11"

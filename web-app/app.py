@@ -27,37 +27,22 @@ def index():
     return render_template("capture.html")
 
 
-@app.route("/upload", methods=["POST"])
-def upload():
-    """
-    Handle image upload
-    """
-    if "image" in request.files:
-        image = request.files["image"]
-        content_type = image.content_type
-        image_id = fs.put(image, content_type=content_type, filename=image.filename)
-        images.insert_one(
-            {
-                "filename": image.filename,
-                "contentType": content_type,
-                "gridfs_id": image_id,
-            }
-        )
-        return redirect(url_for("index"))
-    return render_template("capture.html")
-
-
-@app.route("/trigger-ml-processing", methods=["GET"])
+@app.route("/trigger-ml-processing", methods=["POST"])
 def trigger_ml_processing():
-    """
-    api endpoint
-    """
-    response = requests.get("http://ml_client:5001/process-latest", timeout=15)
-    if response.status_code == 200:
-        return jsonify(response.json())
-    return jsonify({"error": "Failed to process image"}), 500
+    if 'frame' in request.files:
+        frame = request.files['frame']
+        content_type = frame.content_type
+        image_id = fs.put(frame, content_type=content_type, filename=frame.filename)
+        images.insert_one({
+            "filename": frame.filename,
+            "contentType": content_type,
+            "gridfs_id": image_id,
+        })
 
+        response = requests.get(f"http://ml_client:5001/process-image/{image_id}")
+        return jsonify(response.json())
+    return jsonify({"error": "No frame received"}), 400
 
 if __name__ == "__main__":
     PORT = 5000
-    app.run(debug=True, host="0.0.0.0", port=PORT)
+    app.run(host="0.0.0.0", port=PORT)

@@ -1,49 +1,68 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Image Capture</title>
+    <title>Live Video Capture</title>
 </head>
 <body>
-    <h1>Upload Image</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="image" accept="image/*">
-        <input type="submit" value="Upload">
-    </form>
-    <button id="process-button">Process Latest Image</button>
+    <h1>Video Stream</h1>
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
     <div id="results"></div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const resultsDiv = document.getElementById('results');
+    
+        if (navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    video.srcObject = stream;
+                })
+                .catch(function (error) {
+                    console.log("Error accessing camera: ", error);
+                });
+        }
+    
+        function captureFrame() {
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob(function(blob) {
+                let formData = new FormData();
+                formData.append('frame', blob);
+    
+                fetch('/trigger-ml-processing', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    resultsDiv.innerHTML = '';
+                    if (data.message === 'Image processed' && data.labels.length) {
+                        let detections = data.labels.map((label, index) => ({
+                            label: label,
+                            score: data.scores[index]
+                        }));
+    
+                        detections.sort((a, b) => b.score - a.score);
+    
+                        // Display top 3 detections
+                        detections.slice(0, 3).forEach(detection => {
+                            resultsDiv.innerHTML += `<p>${detection.label} (Score: ${detection.score.toFixed(2)})</p>`;
+                        });
+                    } else {
+                        resultsDiv.innerHTML = 'No image processed or error occurred.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    resultsDiv.innerHTML = 'Failed to process image';
+                });
+            }, 'image/jpeg');
+        }
+    
+        setInterval(captureFrame, 3000); // Capture frame every 3 seconds
+    </script>
     
 </body>
-<script>
-    document.getElementById('process-button').addEventListener('click', function() {
-        fetch('/trigger-ml-processing')
-            .then(response => response.json())
-            .then(data => {
-                let resultDiv = document.getElementById('results');
-                resultDiv.innerHTML = ''; 
-
-                if (data.message === 'Image processed' && data.labels.length) {
-                    let detections = data.labels.map((label, index) => ({
-                        label: label,
-                        score: data.scores[index]
-                    }));
-
-                    detections.sort((a, b) => b.score - a.score);
-
-                    // Display top 3 detections
-                    detections.slice(0, 3).forEach(detection => {
-                        resultDiv.innerHTML += `<p>${detection.label} (Score: ${detection.score.toFixed(2)})</p>`;
-                    });
-                } else {
-                    resultDiv.innerHTML = 'No image processed or error occurred.';
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                resultDiv.innerHTML = 'Failed to process image';
-            });
-    });
-</script>
-
-
-
 </html>
