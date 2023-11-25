@@ -129,27 +129,27 @@ def detect_objects(image):
 
     return box_coordinates, scores, labels
 
+
 @app.route("/process-image/<image_id>", methods=["GET"])
 def process_image(image_id):
     """
     Process the image with the given image_id
     """
-    try:
-        image_file = fs.get(ObjectId(image_id))
-    except gridfs.errors.NoFile:
-        return jsonify({"message": "Image not found"}), 404
+    image_file = fs.get(ObjectId(image_id))
 
     image_data = image_file.read()
     image_nparr = np.frombuffer(image_data, np.uint8)
     image = cv2.imdecode(image_nparr, cv2.IMREAD_COLOR)
     boxes, scores, labels = detect_objects(image)
 
-    results.insert_one({
-        "image_id": ObjectId(image_id),
-        "boxes": boxes.tolist(),
-        "scores": scores.tolist(),
-        "labels": labels,
-    })
+    results.insert_one(
+        {
+            "image_id": ObjectId(image_id),
+            "boxes": boxes.tolist(),
+            "scores": scores.tolist(),
+            "labels": labels,
+        }
+    )
 
     final_result = {
         "message": "Image processed",
@@ -158,7 +158,6 @@ def process_image(image_id):
         "labels": labels,
     }
     return jsonify(final_result)
-
 
 
 if __name__ == "__main__":
