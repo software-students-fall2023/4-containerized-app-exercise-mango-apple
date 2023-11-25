@@ -104,9 +104,8 @@ COCO_LABELS = {
     87: "scissors",
     88: "teddy bear",
     89: "hair drier",
-    90: "toothbrush"
+    90: "toothbrush",
 }
-
 
 
 def detect_objects(image):
@@ -157,4 +156,4 @@ def process_latest_image():
 
 
 if __name__ == "__main__":
-    app.run( host="0.0.0.0", port=5001)
+    app.run(host="0.0.0.0", port=5001)
