@@ -1,23 +1,17 @@
 # Containerized App Exercise
+![CI Web App](https://github.com/software-students-fall2023/4-containerized-app-exercise-mango-apple/actions/workflows/web_app_ci/badge.svg)
+![CI ML Client](https://github.com/software-students-fall2023/4-containerized-app-exercise-mango-apple/actions/workflows/ml_client_ci/badge.svg)
 
 ## Set up and run web app
 
-Run the following commands to set up the web app in virtual environment:
+After you clone the repo, run the following commands to set up the web app in a docker container:
 
-First install pipenv
-`pip install pipenv`
+- install and run [docker desktop](https://www.docker.com/get-started)
 
-Initialize the virtual environment 
-`pipenv shell`
-`pipenv install`
+- create a [dockerhub](https://hub.docker.com/signup) account
 
-Run the ml-client first:
-`cd machine-learning-client`
-Then:
-`python ml_client.py`
+- in the terminal: `docker-compose up --build`
 
-Next, in another terminal, to run the app:
-`cd web-app && flask --app app run`
 
 
 
