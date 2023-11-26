@@ -7,11 +7,14 @@ from flask import Flask, render_template, request, jsonify
 import gridfs
 import requests
 from dotenv import load_dotenv
+from flask_cors import CORS, cross_origin
 
 load_dotenv()
 
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 client = pymongo.MongoClient(os.getenv("MONGO_URI"))
 db = client[os.getenv("MONGO_DBNAME")]
@@ -27,7 +30,28 @@ def index():
     return render_template("capture.html")
 
 
-@app.route("/trigger-ml-processing", methods=["POST"])
+@app.route("/upload", methods=["POST"])
+@cross_origin()
+def upload():
+    """
+    Handle image upload
+    """
+    if "image" in request.files:
+        image = request.files["image"]
+        content_type = image.content_type
+        image_id = fs.put(image, content_type=content_type, filename=image.filename)
+        images.insert_one(
+            {
+                "filename": image.filename,
+                "contentType": content_type,
+                "gridfs_id": image_id,
+            }
+        )
+        return redirect(url_for("index"))
+    return render_template("capture.html")
+
+
+@app.route("/trigger-ml-processing", methods=["GET"])
 def trigger_ml_processing():
     """
     api endpoint

@@ -13,6 +13,9 @@ After you clone the repo, run the following commands to set up the web app in a 
 - in the terminal: `docker-compose up --build`
 
 
+Then, in another terminal, run the react frontend:
+`cd web-app/web-app-react && npm run start`
+
 
 
 Build a containerized app that uses machine learning. See [instructions](./instructions.md) for details.
