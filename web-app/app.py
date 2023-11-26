@@ -47,8 +47,9 @@ def upload():
                 "gridfs_id": image_id,
             }
         )
-        return redirect(url_for("index"))
-    return render_template("capture.html")
+        # return redirect(url_for("index"))
+    # TODO: return processed image
+    return "test"
 
 
 @app.route("/trigger-ml-processing", methods=["GET"])
