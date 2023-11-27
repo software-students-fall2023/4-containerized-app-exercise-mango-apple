@@ -2,25 +2,25 @@
 This is the ml_client.py boilerplate
 """
 import os
-from pymongo import MongoClient
-from gridfs import GridFS
-from flask import Flask, jsonify
+import logging
+from bson.objectid import ObjectId
+from dotenv import load_dotenv
 import cv2
 import numpy as np
 import tensorflow as tf
-from dotenv import load_dotenv
-from bson.objectid import ObjectId
-import logging
+from flask import Flask, jsonify
+from pymongo import MongoClient
+from gridfs import GridFS
 
 load_dotenv()
 
 app = Flask(__name__)
 
-
 model = tf.saved_model.load("ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8/saved_model")
 
 
 def get_mongo_client(uri):
+    """Create and return a MongoDB client."""
     return MongoClient(uri)
 
 
@@ -115,14 +115,17 @@ COCO_LABELS = {
 }
 
 
-def detect_objects(image, model):
+def detect_objects(image, tf_model):
+    """
+    Detect objects in the image using the provided TensorFlow model.
+    """
     try:
         image_resized = cv2.resize(image, (320, 320))
         image_uint8 = np.array(image_resized).astype(np.uint8)
         input_tensor = tf.convert_to_tensor([image_uint8], dtype=tf.uint8)
-        detections = model(input_tensor)
+        detections = tf_model(input_tensor)
     except Exception as e:
-        logging.error(f"Error in object detection: {e}")
+        logging.error("Error in object detection: %s", e)
         raise
 
     class_ids = detections["detection_classes"][0].numpy().astype(np.int32)
@@ -135,6 +138,9 @@ def detect_objects(image, model):
 
 @app.route("/process-image/<image_id>", methods=["GET"])
 def process_image(image_id):
+    """
+    Process the image with the given image_id and return the detection results.
+    """
     try:
         image_file = fs.get(ObjectId(image_id))
         image_data = image_file.read()
@@ -150,7 +156,7 @@ def process_image(image_id):
             }
         )
     except Exception as e:
-        logging.error(f"Error processing image: {e}")
+        logging.error("Error processing image: %s", e)
         return jsonify({"error": str(e)}), 500
 
     final_result = {
