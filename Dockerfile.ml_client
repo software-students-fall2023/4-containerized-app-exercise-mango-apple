@@ -7,7 +7,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY machine-learning-client/ .
 
-EXPOSE 5001
+EXPOSE 5002
 
 ENV MONGO_URI=mongodb://mongodb:27017
 

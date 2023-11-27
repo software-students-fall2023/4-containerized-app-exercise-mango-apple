@@ -10,10 +10,11 @@ services:
       context: .
       dockerfile: Dockerfile.ml_client
     ports:
-      - "5001:5001"
+      - "5002:5002"
     environment:
       - MONGO_URI=mongodb://mongodb:27017
       - MONGO_DBNAME=MLAPP
+      - MODEL=ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8/saved_model
     depends_on:
       - mongodb
 
@@ -22,7 +23,7 @@ services:
       context: .
       dockerfile: Dockerfile.web-app
     ports:
-      - "5000:5000"
+      - "5001:5001"
     environment:
       - MONGO_URI=mongodb://mongodb:27017
       - MONGO_DBNAME=MLAPP
