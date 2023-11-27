@@ -1,4 +1,4 @@
-# Containerized App Exercise
+# Image recognition app
 ![CI Web App](https://github.com/software-students-fall2023/4-containerized-app-exercise-mango-apple/actions/workflows/web_app_ci.yml/badge.svg)
 ![CI ML Client](https://github.com/software-students-fall2023/4-containerized-app-exercise-mango-apple/actions/workflows/ml_client_ci.yml/badge.svg)
 
