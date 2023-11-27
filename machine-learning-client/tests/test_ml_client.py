@@ -68,7 +68,7 @@ def test_process_image_route(
 
 @patch("ml_client.fs.get")
 def test_process_image_route_invalid_id(mock_fs_get, client):
-    mock_fs_get.side_effect = Exception("Invalid ID")
+    mock_fs_get.side_effect = FileNotFoundError("Invalid ID")
     response = client.get("/process-image/" + str(ObjectId()))
     assert response.status_code == 500
     data = response.get_json()
