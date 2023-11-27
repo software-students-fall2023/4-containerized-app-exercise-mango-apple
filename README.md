@@ -12,6 +12,7 @@ Our Project Task Board: https://github.com/orgs/software-students-fall2023/proje
 [Marwan AbdElhameed](https://github.com/MarwanWalid2)
 [Pavly Halim](https://github.com/pavlyhalim)
 [Juliann Zhou](https://github.com/juliannzhou)
+[Kieren Gill](https://github.com/kierengill)
 
 ## Set up and run web app
 
