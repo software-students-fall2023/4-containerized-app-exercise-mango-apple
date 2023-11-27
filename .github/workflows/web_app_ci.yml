@@ -3,13 +3,8 @@ name: Web App CI
 on:
   push:
     branches: [ "main" ]
-    paths:
-      - 'web-app/**'
   pull_request:
     branches: [ "main" ]
-    paths:
-      - 'web-app/**'
-
 permissions:
   contents: read
 
