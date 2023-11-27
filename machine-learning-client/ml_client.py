@@ -10,6 +10,7 @@ import numpy as np
 import tensorflow as tf
 from dotenv import load_dotenv
 from bson.objectid import ObjectId
+import logging
 
 load_dotenv()
 
@@ -18,12 +19,17 @@ app = Flask(__name__)
 
 model = tf.saved_model.load("ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8/saved_model")
 
-client = MongoClient(os.getenv("MONGO_URI"))
+
+def get_mongo_client(uri):
+    return MongoClient(uri)
+
+
+mongo_uri = os.getenv("MONGO_URI")
+client = get_mongo_client(mongo_uri)
 db = client[os.getenv("MONGO_DBNAME")]
 fs = GridFS(db)
 results = db.results
 images = db.images
-
 
 COCO_LABELS = {
     1: "person",
@@ -109,21 +115,18 @@ COCO_LABELS = {
 }
 
 
-def detect_objects(image):
-    """
-    Detect objects in the image
-    """
-    image_resized = cv2.resize(image, (320, 320))
-
-    image_uint8 = np.array(image_resized).astype(np.uint8)
-
-    input_tensor = tf.convert_to_tensor([image_uint8], dtype=tf.uint8)
-
-    detections = model(input_tensor)
+def detect_objects(image, model):
+    try:
+        image_resized = cv2.resize(image, (320, 320))
+        image_uint8 = np.array(image_resized).astype(np.uint8)
+        input_tensor = tf.convert_to_tensor([image_uint8], dtype=tf.uint8)
+        detections = model(input_tensor)
+    except Exception as e:
+        logging.error(f"Error in object detection: {e}")
+        raise
 
     class_ids = detections["detection_classes"][0].numpy().astype(np.int32)
     labels = [COCO_LABELS.get(class_id, "unknown") for class_id in class_ids]
-
     box_coordinates = detections["detection_boxes"][0].numpy()
     scores = detections["detection_scores"][0].numpy()
 
@@ -132,24 +135,23 @@ def detect_objects(image):
 
 @app.route("/process-image/<image_id>", methods=["GET"])
 def process_image(image_id):
-    """
-    Process the image with the given image_id
-    """
-    image_file = fs.get(ObjectId(image_id))
-
-    image_data = image_file.read()
-    image_nparr = np.frombuffer(image_data, np.uint8)
-    image = cv2.imdecode(image_nparr, cv2.IMREAD_COLOR)
-    boxes, scores, labels = detect_objects(image)
-
-    results.insert_one(
-        {
-            "image_id": ObjectId(image_id),
-            "boxes": boxes.tolist(),
-            "scores": scores.tolist(),
-            "labels": labels,
-        }
-    )
+    try:
+        image_file = fs.get(ObjectId(image_id))
+        image_data = image_file.read()
+        image_nparr = np.frombuffer(image_data, np.uint8)
+        image = cv2.imdecode(image_nparr, cv2.IMREAD_COLOR)
+        boxes, scores, labels = detect_objects(image, model)
+        results.insert_one(
+            {
+                "image_id": ObjectId(image_id),
+                "boxes": boxes.tolist(),
+                "scores": scores.tolist(),
+                "labels": labels,
+            }
+        )
+    except Exception as e:
+        logging.error(f"Error processing image: {e}")
+        return jsonify({"error": str(e)}), 500
 
     final_result = {
         "message": "Image processed",

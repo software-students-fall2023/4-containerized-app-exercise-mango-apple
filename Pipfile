@@ -13,6 +13,10 @@ numpy = "*"
 python-dotenv = "*"
 requests = "*"
 pymongo = "*"
+pytest = "*"
+pytest-flask = "*"
+pytest-cov = "*"
+mongomock = "*"
 
 [dev-packages]
 pylint = "*"
