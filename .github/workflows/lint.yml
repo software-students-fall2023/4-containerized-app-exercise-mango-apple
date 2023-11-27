@@ -20,7 +20,7 @@ jobs:
      - name: Lint with pylint
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
-          find . -name "*.py" ! -path "./machine-learning-client/tests/*" ! -path "./web-app/tests/*" | xargs pipenv run pylint --rcfile=.pylintrc
+          find . -name "*.py" ! -path "./machine-learning-client/tests/*" ! -path "./web-app/tests/*" | xargs pipenv run pylint --ignored-modules=cv2
      - name: Format with black
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
