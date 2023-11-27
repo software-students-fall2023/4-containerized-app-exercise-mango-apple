@@ -4,10 +4,23 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+black = "*"
+pylint = "*"
+flask = "*"
+opencv-python-headless = "*"
+tensorflow = "*"
+numpy = "*"
+python-dotenv = "*"
+requests = "*"
+pymongo = "*"
+pytest = "*"
+pytest-flask = "*"
+pytest-cov = "*"
+mongomock = "*"
+
+[dev-packages]
 pylint = "*"
 black = "*"
 
-[dev-packages]
-
 [requires]
-python_version = "3.10"
+python_version = "3.11"

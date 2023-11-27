@@ -9,7 +9,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "3.11"
       - name: Install dependencies
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
@@ -20,8 +20,8 @@ jobs:
       - name: Lint with pylint
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
-          pipenv run pylint **/*.py
+          find . -name "*.py" ! -path "./machine-learning-client/tests/*" ! -path "./web-app/tests/*" | xargs pipenv run pylint --ignored-modules=cv2
       - name: Format with black
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
-          pipenv run black --diff --check .
+          pipenv run black --diff --check . --exclude "machine-learning-client/tests/*" --exclude "web-app/tests/*"

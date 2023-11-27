@@ -1,0 +1,18 @@
+FROM python:3.11-slim
+
+WORKDIR /usr/src/ml_client
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY machine-learning-client/ .
+
+EXPOSE 5002
+
+ENV MONGO_URI=mongodb://mongodb:27017
+
+ENV MONGO_DBNAME=MLAPP
+
+ENV MODEL=ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8/saved_model
+
+CMD ["python", "./ml_client.py"]

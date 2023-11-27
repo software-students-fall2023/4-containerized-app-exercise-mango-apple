@@ -1,0 +1,13 @@
+black
+pylint
+flask
+pymongo
+opencv-python-headless
+tensorflow
+numpy
+python-dotenv
+requests
+pytest
+pytest-flask
+pytest-cov
+mongomock
