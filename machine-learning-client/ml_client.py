@@ -2,28 +2,34 @@
 This is the ml_client.py boilerplate
 """
 import os
-from pymongo import MongoClient
-from gridfs import GridFS
-from flask import Flask, jsonify
+import logging
+from bson.objectid import ObjectId
+from dotenv import load_dotenv
 import cv2
 import numpy as np
 import tensorflow as tf
-from dotenv import load_dotenv
-from bson.objectid import ObjectId
+from flask import Flask, jsonify
+from pymongo import MongoClient
+from gridfs import GridFS
 
 load_dotenv()
 
 app = Flask(__name__)
 
+model = tf.saved_model.load(os.getenv("MODEL"))
 
-model = tf.saved_model.load("ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8/saved_model")
 
-client = MongoClient(os.getenv("MONGO_URI"))
+def get_mongo_client(uri):
+    """Create and return a MongoDB client."""
+    return MongoClient(uri)
+
+
+mongo_uri = os.getenv("MONGO_URI")
+client = get_mongo_client(mongo_uri)
 db = client[os.getenv("MONGO_DBNAME")]
 fs = GridFS(db)
 results = db.results
 images = db.images
-
 
 COCO_LABELS = {
     1: "person",
@@ -109,21 +115,21 @@ COCO_LABELS = {
 }
 
 
-def detect_objects(image):
+def detect_objects(image, tf_model):
     """
-    Detect objects in the image
+    Detect objects in the image using the provided TensorFlow model.
     """
-    image_resized = cv2.resize(image, (320, 320))
-
-    image_uint8 = np.array(image_resized).astype(np.uint8)
-
-    input_tensor = tf.convert_to_tensor([image_uint8], dtype=tf.uint8)
-
-    detections = model(input_tensor)
+    try:
+        image_resized = cv2.resize(image, (320, 320))
+        image_uint8 = np.array(image_resized).astype(np.uint8)
+        input_tensor = tf.convert_to_tensor([image_uint8], dtype=tf.uint8)
+        detections = tf_model(input_tensor)
+    except Exception as e:
+        logging.error("Error in object detection: %s", e)
+        raise
 
     class_ids = detections["detection_classes"][0].numpy().astype(np.int32)
     labels = [COCO_LABELS.get(class_id, "unknown") for class_id in class_ids]
-
     box_coordinates = detections["detection_boxes"][0].numpy()
     scores = detections["detection_scores"][0].numpy()
 
@@ -133,23 +139,25 @@ def detect_objects(image):
 @app.route("/process-image/<image_id>", methods=["GET"])
 def process_image(image_id):
     """
-    Process the image with the given image_id
+    Process the image with the given image_id and return the detection results.
     """
-    image_file = fs.get(ObjectId(image_id))
-
-    image_data = image_file.read()
-    image_nparr = np.frombuffer(image_data, np.uint8)
-    image = cv2.imdecode(image_nparr, cv2.IMREAD_COLOR)
-    boxes, scores, labels = detect_objects(image)
-
-    results.insert_one(
-        {
-            "image_id": ObjectId(image_id),
-            "boxes": boxes.tolist(),
-            "scores": scores.tolist(),
-            "labels": labels,
-        }
-    )
+    try:
+        image_file = fs.get(ObjectId(image_id))
+        image_data = image_file.read()
+        image_nparr = np.frombuffer(image_data, np.uint8)
+        image = cv2.imdecode(image_nparr, cv2.IMREAD_COLOR)
+        boxes, scores, labels = detect_objects(image, model)
+        results.insert_one(
+            {
+                "image_id": ObjectId(image_id),
+                "boxes": boxes.tolist(),
+                "scores": scores.tolist(),
+                "labels": labels,
+            }
+        )
+    except FileNotFoundError as e:
+        logging.error("Error processing image: %s", e)
+        return jsonify({"error": str(e)}), 500
 
     final_result = {
         "message": "Image processed",
