@@ -3,12 +3,9 @@ name: Ml client CI
 on:
   push:
     branches: [ "main" ]
-    paths:
-      - 'machine-learning-client/**'
+    
   pull_request:
     branches: [ "main" ]
-    paths:
-      - 'machine-learning-client/**'
 
 permissions:
   contents: read
