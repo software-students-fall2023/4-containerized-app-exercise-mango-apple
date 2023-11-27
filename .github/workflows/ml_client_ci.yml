@@ -1,4 +1,4 @@
-name: Web App CI
+name: Ml client CI
 
 on:
   push:
@@ -40,5 +40,4 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
-        cd machine-learning-client
-        pytest
+       PYTHONPATH=./machine-learning-client pytest machine-learning-client/tests/test_ml_client.py
