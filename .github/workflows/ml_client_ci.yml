@@ -17,7 +17,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    env:
+      MONGO_URI: "mongodb://mongodb:27017"
+      MONGO_DBNAME: "MLAPP"
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.11
