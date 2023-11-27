@@ -33,4 +33,5 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest and coverage
       run: |
-        PYTHONPATH=./web-app pytest --cov=web-app --cov-report term-missing --cov-fail-under=80 tests/test_app.py
+        cd web-app
+        PYTHONPATH=./ pytest --cov=./ --cov-report term-missing --cov-fail-under=80 tests/test_app.py
