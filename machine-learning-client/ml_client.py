@@ -15,6 +15,7 @@ from gridfs import GridFS
 load_dotenv()
 
 app = Flask(__name__)
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 model = tf.saved_model.load(os.getenv("MODEL"))
 
