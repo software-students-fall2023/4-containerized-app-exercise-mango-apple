@@ -155,7 +155,7 @@ def process_image(image_id):
                 "labels": labels,
             }
         )
-    except Exception as e:
+    except FileNotFoundError as e:
         logging.error("Error processing image: %s", e)
         return jsonify({"error": str(e)}), 500
 
