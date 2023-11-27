@@ -13,6 +13,6 @@ ENV MONGO_URI=mongodb://mongodb:27017
 
 ENV MONGO_DBNAME=MLAPP
 
-ENV MODEL=/machine-learning-client/ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8/saved_model
+ENV MODEL=machine-learning-client/ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8/saved_model
 
 CMD ["python", "./ml_client.py"]

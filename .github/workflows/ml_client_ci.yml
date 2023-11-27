@@ -20,7 +20,7 @@ jobs:
     env:
       MONGO_URI: "mongodb://mongodb:27017"
       MONGO_DBNAME: "MLAPP"
-      MODEL: "/machine-learning-client/ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8/saved_model"
+      MODEL: "machine-learning-client/ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8/saved_model"
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python 3.11
