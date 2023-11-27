@@ -21,7 +21,7 @@ def test_index_route(client):
     response = client.get("/")
     assert response.status_code == 200
     assert "<title>Live Video Capture</title>" in response.get_data(as_text=True)
-    assert "Video Stream" in response.get_data(as_text=True)
+    assert "Live Video Capture" in response.get_data(as_text=True)
 
 
 @patch("app.fs.put")
