@@ -17,12 +17,11 @@ jobs:
           python -m pip install pipenv
           pipenv sync --dev --python $(which python)
           pipenv shell --fancy --python $(which python)
-      - name: Lint with pylint
+     - name: Lint with pylint
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
-          find . -name "*.py" ! -path "./tests/*" | xargs pipenv run pylint
-          pipenv run pylint --ignored-modules=cv2 **/*.py
-      - name: Format with black
+          find . -name "*.py" ! -path "./machine-learning-client/tests/*" ! -path "./web-app/tests/*" | xargs pipenv run pylint --rcfile=.pylintrc
+     - name: Format with black
         if: ${{ hashFiles('**/*.py') != '' }}
         run: |
-          pipenv run black --diff --check .
+          pipenv run black --diff --check . --exclude "machine-learning-client/tests/*" --exclude "web-app/tests/*"
