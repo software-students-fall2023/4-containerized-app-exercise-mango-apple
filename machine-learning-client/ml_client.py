@@ -16,7 +16,7 @@ load_dotenv()
 
 app = Flask(__name__)
 
-model = tf.saved_model.load("ssd_mobilenet_v2_fpnlite_320x320_coco17_tpu-8/saved_model")
+model = tf.saved_model.load(os.getenv("MODEL"))
 
 
 def get_mongo_client(uri):
