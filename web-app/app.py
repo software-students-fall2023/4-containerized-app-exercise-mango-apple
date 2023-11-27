@@ -45,12 +45,12 @@ def trigger_ml_processing():
         )
 
         response = requests.get(
-            f"http://ml_client:5001/process-image/{image_id}", timeout=20
+            f"http://ml_client:5002/process-image/{image_id}", timeout=20
         )
         return jsonify(response.json())
     return jsonify({"error": "No frame received"}), 400
 
 
 if __name__ == "__main__":
-    PORT = 5000
+    PORT = 5001
     app.run(host="0.0.0.0", port=PORT)
