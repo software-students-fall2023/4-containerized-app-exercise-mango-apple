@@ -2,12 +2,69 @@
 <html>
 <head>
     <title>Live Video Capture</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 0;
+            margin-bottom: 20px;
+        }
+        h1 {
+            margin: 0;
+        }
+        .container {
+            width: 80%;
+            margin: auto;
+            overflow: hidden;
+        }
+        #video, #canvas {
+            border: 2px solid #ddd;
+            margin-bottom: 10px;
+            max-width: 100%;
+        }
+        #results {
+            font-size: 1.1em;
+            color: #555;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            margin-bottom: 20px;
+        }
+        #results p {
+            margin: 5px 0;
+        }
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #333;
+            color: white;
+        }
+    </style>
 </head>
 <body>
-    <h1>Video Stream</h1>
-    <video id="video" width="640" height="480" autoplay></video>
-    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
-    <div id="results"></div>
+    <header>
+        <div class="container">
+            <h1>Live Video Capture</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        <p>Welcome to the Live Video Capture application! This interface allows you to view a live video feed and see real-time analysis of the captured frames.</p>
+        <video id="video" width="640" height="480" autoplay></video>
+        <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+        <div id="results"></div>
+    </div>
+
+    <footer>
+        <p>&copy; 2023 Live Video Capture. All rights reserved.</p>
+    </footer>
 
     <script>
         const video = document.getElementById('video');
